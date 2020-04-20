@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public class DocReader implements MyFileReader {
 
@@ -15,23 +14,20 @@ public class DocReader implements MyFileReader {
         File file = null;
         WordExtractor extractor = null;
         StringBuilder sb = new StringBuilder();
-
-        try
-        {
-
-            try (HWPFDocument document = new HWPFDocument(POIFSFileSystem.create(new File(path)))) {
-                extractor = new WordExtractor(document);
-            }
+        try {
+            file = new File(path);
+            FileInputStream fis = new FileInputStream(file.getAbsolutePath());
+            HWPFDocument document = new HWPFDocument(fis);
+            extractor = new WordExtractor(document);
             String[] fileData = extractor.getParagraphText();
-            for(int i = 0; i < fileData.length; i++) {
-                sb.append(fileData[i]);
+            for (int i = 0; i < fileData.length; i++) {
+                if (fileData[i] != null)
+                    sb.append(fileData[i]);
             }
-        }
-        catch (Exception exep)
-        {
+        } catch (Exception exep) {
             exep.printStackTrace();
         }
         return sb.toString();
-         }
     }
+}
 
